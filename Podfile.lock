@@ -1,0 +1,28 @@
+PODS:
+  - Alamofire (4.9.1)
+  - AlamofireObjectMapper (5.2.1):
+    - Alamofire (~> 4.7)
+    - ObjectMapper (~> 3.4)
+  - ObjectMapper (3.5.3)
+  - SwiftyUserDefaults (3.0.0)
+
+DEPENDENCIES:
+  - AlamofireObjectMapper
+  - SwiftyUserDefaults
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - AlamofireObjectMapper
+    - ObjectMapper
+    - SwiftyUserDefaults
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  AlamofireObjectMapper: 1989f690e982b71921b9253f53a4f33a9bc00d88
+  ObjectMapper: 97111c97e054a6ee25917662106689f0b4127b37
+  SwiftyUserDefaults: 0f1d45fc3aafb9064dac661e367f8f83fe21a4b4
+
+PODFILE CHECKSUM: e4eae10c19419c35cae1f6c8bf4875d20bf090ff
+
+COCOAPODS: 1.10.1

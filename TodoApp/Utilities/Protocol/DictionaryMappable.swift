@@ -1,8 +1,22 @@
-//
-//  DictionaryMappable.swift
-//  TodoApp
-//
-//  Created by Komkrit.Sir on 24/3/2564 BE.
-//
-
 import Foundation
+
+protocol DictionaryMappable {
+    associatedtype Ttype: Hashable
+    init?(dictionary: [Ttype: Any])
+    func dictionaryRepresentation() -> [Ttype: Any]
+    static func modelsFromDictionaryArray(array: [Any]) -> [Self]
+}
+
+extension DictionaryMappable {
+    static func modelsFromDictionaryArray(array: [Any]) -> [Self] {
+        var models = [Self]()
+        for item in array {
+            guard let dictionary = item as? [Ttype: Any],
+                let model = Self(dictionary: dictionary) else {
+                    continue
+            }
+            models.append(model)
+        }
+        return models
+    }
+}
