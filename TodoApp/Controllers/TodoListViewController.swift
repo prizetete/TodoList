@@ -23,17 +23,19 @@ class TodoListViewController: UIViewController {
     }
     
     private func setupView() {
+        self.navigationItem.title = "To Do"
         self.navigationItem.hidesBackButton = true
         self.view.backgroundColor = .orange
         self.navigationController?.navigationBar.barTintColor = .orange
-        self.navigationItem.title = "To Do"
         self.navigationController?.navigationBar.isTranslucent = false
+        
+        self.tableView.backgroundColor = .white
         
         let rightBtn = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(self.logout))
         rightBtn.tintColor = .white
         self.navigationItem.rightBarButtonItem = rightBtn
         
-        let leftBtn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(self.createTodoTask))
+        let leftBtn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(self.addTodoTask))
         leftBtn.tintColor = .white
         self.navigationItem.leftBarButtonItem = leftBtn
     }
@@ -54,18 +56,20 @@ class TodoListViewController: UIViewController {
         }
     }
     
-    @objc func createTodoTask() {
+    @objc func addTodoTask() {
         let alert = UIAlertController(title: "Alert", message: "Add todo task", preferredStyle: .alert)
         alert.addTextField()
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] _ in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            TodoService.shared.createTodo(description: textField?.text ?? "") { [weak self] fetchResult in
+            TodoService.shared.addTodoTask(description: textField?.text ?? "") { [weak self] fetchResult in
                 guard let strongSelf = self else { return }
                 switch fetchResult {
                 case .success:
                     strongSelf.fetchDataTodoTask()
                 case .failure(let error):
-                    print("register fail error: \(error)")
+                    let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    strongSelf.present(alert, animated: true, completion: nil)
                 }
             }
         }))
@@ -75,7 +79,8 @@ class TodoListViewController: UIViewController {
     @objc func logout() {
         let alertController = UIAlertController(title: "Alert", message: "Do you want to logout?", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-            TodoService.shared.logout { fetchResult in
+            TodoService.shared.logout { [weak self] fetchResult in
+                guard let strongSelf = self else { return }
                 switch fetchResult {
                 case .success(let response):
                     if response.value?.status ?? false {
@@ -87,7 +92,9 @@ class TodoListViewController: UIViewController {
                         UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.makeKeyAndVisible()
                     }
                 case .failure(let error):
-                    print("login fail error: \(error)")
+                    let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    strongSelf.present(alert, animated: true, completion: nil)
                 }
             }
         }
@@ -100,60 +107,55 @@ class TodoListViewController: UIViewController {
 
 extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("select row: \(indexPath.row)")
-        let data = self.todoData[indexPath.row]
-        if !(data.completed ?? false) {
-            let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoDetailControllerID") as! TodoDetailController
-            destinationVC.id = data._id
-            self.navigationController?.pushViewController(destinationVC, animated: true)
+        if self.todoData.count > 0 {
+            let data = self.todoData[indexPath.row]
+            if !(data.completed ?? false) {
+                let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoDetailControllerID") as! TodoDetailController
+                destinationVC.id = data._id
+                self.navigationController?.pushViewController(destinationVC, animated: true)
+            }
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.todoData.count == 0 ? 1 : self.todoData.count
+        return self.todoData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if self.todoData.count == 0 {
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "emptyCell") as! EmptyCell
-            cell.selectionStyle = .none
-            cell.emptyLabel.textColor = .black
-            cell.emptyLabel.text = "No Data"
-            return cell
-        } else {
-            let data = self.todoData[indexPath.row]
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "todoCell") as! TodoCell
-            cell.selectionStyle = .none
-            cell.backgroundColor = data.completed ?? false ? .green : .black
-            cell.todoDescriptionLabel.text = data.description
-            return cell
-        }
+        let data = self.todoData[indexPath.row]
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "todoCell") as! TodoCell
+        cell.selectionStyle = .none
+        cell.backgroundColor = .white
+        cell.backgroundColor = data.completed ?? false ? .green : .black
+        cell.todoDescriptionLabel.text = data.description
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.todoData.count == 0 ? self.view.frame.size.height : 110.0
+        return 70.0
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.todoData.count == 0 ? self.view.frame.size.height : 110.0
+        return 70.0
     }
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .delete
+        return self.todoData.count > 0 ? .delete : .none
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            print("remove: \(indexPath.row)")
+        if editingStyle == .delete, self.todoData.count > 0 {
             let data = self.todoData[indexPath.row]
-            TodoService.shared.removeTask(id: data._id ?? "") { fetchResult in
+            TodoService.shared.removeTask(id: data._id ?? "") { [weak self] fetchResult in
+                guard let strongSelf = self else { return }
                 switch fetchResult {
-                case .success(let response):
-                    print("remove success: \(response.value?.status)")
-                    self.todoData.remove(at: indexPath.row)
-                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                case .success:
+                    strongSelf.todoData.remove(at: indexPath.row)
+                    strongSelf.tableView.deleteRows(at: [indexPath], with: .fade)
                 case .failure(let error):
-                    print("login fail error: \(error)")
+                    let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    strongSelf.present(alert, animated: true, completion: nil)
                 }
             }
         }

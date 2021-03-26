@@ -16,13 +16,27 @@ class TodoDetailController: UIViewController {
     private var todoData: TaskResponse?
     
     override func viewDidLoad() {
-        print("todo Detail")
         self.setupView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.fetchDetail()
+    }
+    
+    private func setupView() {
+        self.navigationItem.title = "Edit Task"
+        self.view.backgroundColor = .orange
+        self.navigationController?.navigationBar.barTintColor = .orange
+        self.navigationController?.navigationBar.isTranslucent = false
+        
+        self.descriptionTextField.textColor = .black
+        
+        self.completedBtn.layer.cornerRadius = 8.0
+        self.completedBtn.addTarget(self, action: #selector(self.completedTask), for: .touchUpInside)
+        
+        self.updateBtn.layer.cornerRadius = 8.0
+        self.updateBtn.addTarget(self, action: #selector(self.updateTask), for: .touchUpInside)
     }
     
     private func fetchDetail() {
@@ -33,24 +47,11 @@ class TodoDetailController: UIViewController {
                 strongSelf.todoData = response.value?.task
                 strongSelf.descriptionTextField.text = response.value?.task?.description
             case .failure(let error):
-                print("register fail error: \(error)")
+                let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                strongSelf.present(alert, animated: true, completion: nil)
             }
         }
-    }
-    
-    private func setupView() {
-        self.descriptionTextField.textColor = .black
-        
-        self.navigationItem.title = "Edit ToDo"
-        self.view.backgroundColor = .orange
-        self.navigationController?.navigationBar.barTintColor = .orange
-        self.navigationController?.navigationBar.isTranslucent = false
-        
-        self.completedBtn.layer.cornerRadius = 8.0
-        self.completedBtn.addTarget(self, action: #selector(self.completedTask), for: .touchUpInside)
-        
-        self.updateBtn.layer.cornerRadius = 8.0
-        self.updateBtn.addTarget(self, action: #selector(self.updateTask), for: .touchUpInside)
     }
     
     @objc func updateTask() {
@@ -58,10 +59,11 @@ class TodoDetailController: UIViewController {
             guard let strongSelf = self else { return }
             switch fetchResult {
             case .success(let response):
-                print("update complete: \(response.value?.task?.description)")
                 strongSelf.navigationController?.popViewController(animated: true)
             case .failure(let error):
-                print("fail error: \(error)")
+                let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                strongSelf.present(alert, animated: true, completion: nil)
             }
         }
     }
@@ -71,10 +73,11 @@ class TodoDetailController: UIViewController {
             guard let strongSelf = self else { return }
             switch fetchResult {
             case .success(let response):
-                print("completed task: \(response.value?.task?.description)")
                 strongSelf.navigationController?.popViewController(animated: true)
             case .failure(let error):
-                print("fail error: \(error)")
+                let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                strongSelf.present(alert, animated: true, completion: nil)
             }
         }
     }

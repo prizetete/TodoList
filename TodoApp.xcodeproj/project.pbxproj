@@ -16,10 +16,11 @@
 		947F04D6260C791800BFBDEF /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F04D5260C791800BFBDEF /* LoginRequest.swift */; };
 		947F04D9260C7A3D00BFBDEF /* RegisterRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F04D8260C7A3D00BFBDEF /* RegisterRequest.swift */; };
 		947F0509260C843B00BFBDEF /* LogoutResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F0508260C843B00BFBDEF /* LogoutResponse.swift */; };
-		947F050C260CD18300BFBDEF /* CreateTodoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F050B260CD18300BFBDEF /* CreateTodoRequest.swift */; };
+		947F050C260CD18300BFBDEF /* AddTodoTaskRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F050B260CD18300BFBDEF /* AddTodoTaskRequest.swift */; };
 		947F050F260CD38B00BFBDEF /* AddTaskResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F050E260CD38B00BFBDEF /* AddTaskResponse.swift */; };
 		947F0512260CD39500BFBDEF /* TaskResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F0511260CD39500BFBDEF /* TaskResponse.swift */; };
 		947F0515260CD71C00BFBDEF /* GetAllTaskResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F0514260CD71C00BFBDEF /* GetAllTaskResponse.swift */; };
+		947F0519260D84FC00BFBDEF /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947F0518260D84FC00BFBDEF /* StringExtension.swift */; };
 		94D720E2260B2E6F002AA641 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D720E1260B2E6F002AA641 /* AppDelegate.swift */; };
 		94D720E4260B2E6F002AA641 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D720E3260B2E6F002AA641 /* SceneDelegate.swift */; };
 		94D720E9260B2E6F002AA641 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 94D720E7260B2E6F002AA641 /* Main.storyboard */; };
@@ -46,10 +47,11 @@
 		947F04D5260C791800BFBDEF /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
 		947F04D8260C7A3D00BFBDEF /* RegisterRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterRequest.swift; sourceTree = "<group>"; };
 		947F0508260C843B00BFBDEF /* LogoutResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutResponse.swift; sourceTree = "<group>"; };
-		947F050B260CD18300BFBDEF /* CreateTodoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTodoRequest.swift; sourceTree = "<group>"; };
+		947F050B260CD18300BFBDEF /* AddTodoTaskRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoTaskRequest.swift; sourceTree = "<group>"; };
 		947F050E260CD38B00BFBDEF /* AddTaskResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskResponse.swift; sourceTree = "<group>"; };
 		947F0511260CD39500BFBDEF /* TaskResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskResponse.swift; sourceTree = "<group>"; };
 		947F0514260CD71C00BFBDEF /* GetAllTaskResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllTaskResponse.swift; sourceTree = "<group>"; };
+		947F0518260D84FC00BFBDEF /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		94D720DE260B2E6F002AA641 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94D720E1260B2E6F002AA641 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		94D720E3260B2E6F002AA641 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,6 +101,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		947F0517260D84F100BFBDEF /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				947F0518260D84FC00BFBDEF /* StringExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		947F051C260D963600BFBDEF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				947F04D2260C77C600BFBDEF /* UserResponse.swift */,
+				947F0511260CD39500BFBDEF /* TaskResponse.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		94D720D5260B2E6F002AA641 = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +145,7 @@
 				94D720E3260B2E6F002AA641 /* SceneDelegate.swift */,
 				94D720ED260B2E70002AA641 /* Assets.xcassets */,
 				94D7212E260B3341002AA641 /* Controllers */,
+				947F0517260D84F100BFBDEF /* Extensions */,
 				94D720EF260B2E70002AA641 /* LaunchScreen.storyboard */,
 				94D720E7260B2E6F002AA641 /* Main.storyboard */,
 				94D7212F260B334F002AA641 /* Models */,
@@ -162,7 +182,7 @@
 			children = (
 				947F04D5260C791800BFBDEF /* LoginRequest.swift */,
 				947F04D8260C7A3D00BFBDEF /* RegisterRequest.swift */,
-				947F050B260CD18300BFBDEF /* CreateTodoRequest.swift */,
+				947F050B260CD18300BFBDEF /* AddTodoTaskRequest.swift */,
 			);
 			path = Resquest;
 			sourceTree = "<group>";
@@ -170,11 +190,10 @@
 		94D72131260B3362002AA641 /* Response */ = {
 			isa = PBXGroup;
 			children = (
+				947F051C260D963600BFBDEF /* Components */,
 				947F04CF260C769F00BFBDEF /* LoginResponse.swift */,
-				947F04D2260C77C600BFBDEF /* UserResponse.swift */,
 				947F0508260C843B00BFBDEF /* LogoutResponse.swift */,
 				947F050E260CD38B00BFBDEF /* AddTaskResponse.swift */,
-				947F0511260CD39500BFBDEF /* TaskResponse.swift */,
 				947F0514260CD71C00BFBDEF /* GetAllTaskResponse.swift */,
 			);
 			path = Response;
@@ -346,7 +365,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				947F0509260C843B00BFBDEF /* LogoutResponse.swift in Sources */,
-				947F050C260CD18300BFBDEF /* CreateTodoRequest.swift in Sources */,
+				947F050C260CD18300BFBDEF /* AddTodoTaskRequest.swift in Sources */,
 				94D72157260B3D8E002AA641 /* TodoListViewController.swift in Sources */,
 				947F04D6260C791800BFBDEF /* LoginRequest.swift in Sources */,
 				947F04D9260C7A3D00BFBDEF /* RegisterRequest.swift in Sources */,
@@ -365,6 +384,7 @@
 				947F04D3260C77C600BFBDEF /* UserResponse.swift in Sources */,
 				947F0512260CD39500BFBDEF /* TaskResponse.swift in Sources */,
 				947F04BD260C74FD00BFBDEF /* TodoService.swift in Sources */,
+				947F0519260D84FC00BFBDEF /* StringExtension.swift in Sources */,
 				94D72153260B3D64002AA641 /* LoginViewController.swift in Sources */,
 				94D72150260B3D59002AA641 /* RegisterViewController.swift in Sources */,
 				947F04D0260C769F00BFBDEF /* LoginResponse.swift in Sources */,

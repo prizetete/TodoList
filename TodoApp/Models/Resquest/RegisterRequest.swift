@@ -11,7 +11,7 @@ struct RegisterRequest: DictionaryMappable {
     var password: String
     var age: Int
     var name: String
-    
+
     // MARK: - Initializer
 
     init?(email: String, password: String, age: Int, name: String) {
@@ -20,7 +20,7 @@ struct RegisterRequest: DictionaryMappable {
         self.age = age
         self.name = name
     }
-    
+
     // MARK: - DictionaryMappable
 
     init?(dictionary: [String: Any]) {
@@ -29,7 +29,7 @@ struct RegisterRequest: DictionaryMappable {
         self.name = dictionary["name"] as? String ?? ""
         self.age = dictionary["age"] as? Int ?? 0
     }
-    
+
     func dictionaryRepresentation() -> [String: Any] {
         var dictionary = [String: Any]()
         dictionary["email"] = email

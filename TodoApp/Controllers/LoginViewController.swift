@@ -18,38 +18,19 @@ class LoginViewController: UIViewController {
     }
     
     private func setupView() {
+        self.navigationItem.title = "Login"
         self.navigationItem.hidesBackButton = true
         self.view.backgroundColor = .orange
         self.navigationController?.navigationBar.barTintColor = .orange
-        self.navigationItem.title = "Login"
         self.navigationController?.navigationBar.isTranslucent = false
         
-        self.loginBtn.layer.cornerRadius = 8.0
+        self.passwordTextField.isSecureTextEntry = true
         
+        self.loginBtn.layer.cornerRadius = 8.0
         self.loginBtn.addTarget(self, action: #selector(self.login), for: .touchUpInside)
         let rightBtn = UIBarButtonItem(title: "Register", style: .plain, target: self, action: #selector(self.register))
         rightBtn.tintColor = .white
         self.navigationItem.rightBarButtonItem = rightBtn
-    }
-    
-    @objc private func login() {
-        self.loginBtn.isUserInteractionEnabled = false
-        
-        TodoService.shared.login(email: "muh.nurali43@gmail.com", password: "12345678") { [weak self] fetchResult in
-            guard let strongSelf = self else { return }
-            strongSelf.loginBtn.isUserInteractionEnabled = true
-            switch fetchResult {
-            case .success(let response):
-                print("login success")
-                strongSelf.setUserDefault((response.value)!)
-                UserProfileManager.setUserLoginState(isLogin: true)
-                let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoListViewControllerID") as! TodoListViewController
-                
-                strongSelf.navigationController?.pushViewController(destinationVC, animated: true)
-            case .failure(let error):
-                print("login fail error: \(error)")
-            }
-        }
     }
     
     private func setUserDefault(_ result: LoginResponse) {
@@ -67,5 +48,43 @@ class LoginViewController: UIViewController {
     @objc private func register() {
         let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "RegisterViewControllerID") as! RegisterViewController
         self.navigationController?.pushViewController(destinationVC, animated: true)
+    }
+    
+    @objc private func login() {
+        self.loginBtn.isUserInteractionEnabled = false
+        
+        guard let email = self.userNameTextField.text, email != "", email.isValidEmail() else {
+            self.userNameTextField.becomeFirstResponder()
+            let alert = UIAlertController(title: "Alert", message: "กรอก email ใหม่", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            self.loginBtn.isUserInteractionEnabled = true
+            return
+        }
+        guard let password = self.passwordTextField.text, password != "", password.isValidPassword() else {
+            self.passwordTextField.becomeFirstResponder()
+            let alert = UIAlertController(title: "Alert", message: "กรอก password ใหม่", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            self.loginBtn.isUserInteractionEnabled = true
+            return
+        }
+        
+        TodoService.shared.login(email: self.userNameTextField.text ?? "", password: self.passwordTextField.text ?? "") { [weak self] fetchResult in
+            guard let strongSelf = self else { return }
+            strongSelf.loginBtn.isUserInteractionEnabled = true
+            switch fetchResult {
+            case .success(let response):
+                strongSelf.setUserDefault((response.value)!)
+                UserProfileManager.setUserLoginState(isLogin: true)
+                let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoListViewControllerID") as! TodoListViewController
+                
+                strongSelf.navigationController?.pushViewController(destinationVC, animated: true)
+            case .failure(let error):
+                let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                strongSelf.present(alert, animated: true, completion: nil)
+            }
+        }
     }
 }

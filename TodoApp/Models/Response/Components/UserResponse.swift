@@ -17,8 +17,9 @@ class UserResponse: Mappable {
     var createdAt: String?
     var updatedAt: String?
     var __v: Int?
-    
+
     // MARK: Mappable
+
     required init?(map: Map) {
         guard validateKeys(json: map.JSON,
                            keys: [])

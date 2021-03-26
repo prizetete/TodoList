@@ -57,7 +57,6 @@ class TodoService: NSObject {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(token)"
         ]
-        print(headers)
         Alamofire.request(url, method: .post, encoding: JSONEncoding.default, headers: headers)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
@@ -71,13 +70,13 @@ class TodoService: NSObject {
             }
     }
     
-    public func createTodo(description: String, completionHandler: @escaping (FetchResult<DataResponse<AddTaskResponse>>) -> Void) {
+    public func addTodoTask(description: String, completionHandler: @escaping (FetchResult<DataResponse<AddTaskResponse>>) -> Void) {
         let url = self.baseURL + "/task"
         let token = Defaults[.token] ?? ""
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(token)"
         ]
-        let params = CreateTodoRequest(desc: description)?.dictionaryRepresentation()
+        let params = AddTodoTaskRequest(desc: description)?.dictionaryRepresentation()
         Alamofire.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])

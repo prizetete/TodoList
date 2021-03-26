@@ -12,8 +12,9 @@ extension DictionaryMappable {
         var models = [Self]()
         for item in array {
             guard let dictionary = item as? [Ttype: Any],
-                let model = Self(dictionary: dictionary) else {
-                    continue
+                  let model = Self(dictionary: dictionary)
+            else {
+                continue
             }
             models.append(model)
         }

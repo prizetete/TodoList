@@ -11,21 +11,23 @@ struct LoginRequest: DictionaryMappable {
     var password: String
     
     // MARK: - Initializer
+
     init?(email: String, password: String) {
         self.email = email
         self.password = password
     }
     
     // MARK: - DictionaryMappable
+
     init?(dictionary: [String: Any]) {
-        self.email    = dictionary["email"] as? String ?? ""
-        self.password    = dictionary["password"] as? String ?? ""
+        self.email = dictionary["email"] as? String ?? ""
+        self.password = dictionary["password"] as? String ?? ""
     }
     
     func dictionaryRepresentation() -> [String: Any] {
         var dictionary = [String: Any]()
-        dictionary["email"]    = email
-        dictionary["password"]    = password
+        dictionary["email"] = email
+        dictionary["password"] = password
         
         return dictionary
     }
