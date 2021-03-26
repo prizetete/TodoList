@@ -8,30 +8,38 @@
 import UIKit
 
 class RegisterViewController: UIViewController {
+    // MARK: - IBOutlets
+
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var ageTextField: UITextField!
     @IBOutlet var registerBtn: UIButton!
-    
+
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         self.setupView()
     }
-    
+
+    // MARK: - UI Setup
+
     private func setupView() {
         self.navigationItem.title = "Register"
         self.view.backgroundColor = .orange
         self.navigationController?.navigationBar.barTintColor = .orange
         self.navigationController?.navigationBar.isTranslucent = false
-        
+
         self.registerBtn.layer.cornerRadius = 8.0
         self.emailTextField.textContentType = .emailAddress
         self.ageTextField.keyboardType = .numberPad
         self.passwordTextField.isSecureTextEntry = true
         self.registerBtn.addTarget(self, action: #selector(self.register), for: .touchUpInside)
     }
-    
-    @objc func register() {
+
+    // MARK: - Private Methods
+
+    @objc private func register() {
         self.registerBtn.isUserInteractionEnabled = false
         guard let email = self.emailTextField.text, email != "", email.isValidEmail() else {
             self.emailTextField.becomeFirstResponder()
@@ -65,14 +73,18 @@ class RegisterViewController: UIViewController {
             self.registerBtn.isUserInteractionEnabled = true
             return
         }
-        
-        // connect api
+
         TodoService.shared.register(email: email, password: password, name: name, age: Int(age)!) { [weak self] fetchResult in
             guard let strongSelf = self else { return }
             strongSelf.registerBtn.isUserInteractionEnabled = true
             switch fetchResult {
             case .success:
-                strongSelf.navigationController?.popViewController(animated: true)
+                let alert = UIAlertController(title: "Alert", message: "Register Success", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    strongSelf.navigationController?.popViewController(animated: true)
+                }))
+                strongSelf.present(alert, animated: true, completion: nil)
+
             case .failure(let error):
                 let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))

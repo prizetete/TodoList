@@ -232,40 +232,25 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bid-M2-FcC">
+                                                    <rect key="frame" x="-120" y="-64" width="240" height="128"/>
+                                                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="4e6-8b-9Wy"/>
+                                                    </constraints>
+                                                </view>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="Bid-M2-FcC" secondAttribute="trailing" id="MNO-MR-yOa"/>
+                                                <constraint firstAttribute="bottom" secondItem="Bid-M2-FcC" secondAttribute="bottom" id="RqH-6w-DRl"/>
                                                 <constraint firstItem="byz-cX-a89" firstAttribute="leading" secondItem="mFc-4C-7CC" secondAttribute="leading" constant="32" id="XIS-JV-ujS"/>
                                                 <constraint firstAttribute="trailing" secondItem="byz-cX-a89" secondAttribute="trailing" constant="32" id="axw-4S-LKF"/>
                                                 <constraint firstItem="byz-cX-a89" firstAttribute="centerY" secondItem="mFc-4C-7CC" secondAttribute="centerY" id="l54-UU-ai2"/>
+                                                <constraint firstItem="Bid-M2-FcC" firstAttribute="leading" secondItem="mFc-4C-7CC" secondAttribute="leading" id="vZR-EX-N6m"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="todoDescriptionLabel" destination="byz-cX-a89" id="LW2-gY-KDF"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="emptyCell" id="Tjo-7v-l2H" customClass="EmptyCell" customModule="TodoApp" customModuleProvider="target">
-                                        <rect key="frame" x="7" y="441" width="414" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Tjo-7v-l2H" id="bUA-84-G6A">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oo7-6O-ayJ">
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="200" id="GjL-eW-Kcj"/>
-                                                        <constraint firstAttribute="height" constant="50" id="PiL-M1-WAJ"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="Oo7-6O-ayJ" firstAttribute="centerX" secondItem="bUA-84-G6A" secondAttribute="centerX" id="0mR-ja-J0z"/>
-                                                <constraint firstItem="Oo7-6O-ayJ" firstAttribute="centerY" secondItem="bUA-84-G6A" secondAttribute="centerY" id="lLS-0L-L6L"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="emptyLabel" destination="Oo7-6O-ayJ" id="Uzo-gY-f8z"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

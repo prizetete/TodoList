@@ -9,14 +9,20 @@ import SwiftyUserDefaults
 import UIKit
 
 class LoginViewController: UIViewController {
+    // MARK: - IBOutlets
+
     @IBOutlet var userNameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var loginBtn: UIButton!
     
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         self.setupView()
     }
     
+    // MARK: - UI Setup
+
     private func setupView() {
         self.navigationItem.title = "Login"
         self.navigationItem.hidesBackButton = true
@@ -33,6 +39,8 @@ class LoginViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBtn
     }
     
+    // MARK: - Private Methods
+
     private func setUserDefault(_ result: LoginResponse) {
         Defaults[._id] = result.user?._id
         Defaults[.createdAt] = result.user?.createdAt

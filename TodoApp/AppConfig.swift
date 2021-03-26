@@ -44,7 +44,6 @@ class UserProfileManager: NSObject {
 
 extension DefaultsKeys {
     static let loginStatus = DefaultsKey<Bool?>("loginStatus")
-
     static let _id = DefaultsKey<String?>("user-id")
     static let age = DefaultsKey<Int?>("user-age")
     static let name = DefaultsKey<String?>("user-name")
@@ -52,6 +51,5 @@ extension DefaultsKeys {
     static let createdAt = DefaultsKey<String?>("user-createdAt")
     static let updatedAt = DefaultsKey<String?>("user-updatedAt")
     static let v = DefaultsKey<Int?>("user-v")
-
     static let token = DefaultsKey<String?>("user-token")
 }

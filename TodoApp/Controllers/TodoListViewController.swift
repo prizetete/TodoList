@@ -7,10 +7,16 @@
 import UIKit
 
 class TodoListViewController: UIViewController {
-    private var todoData: [TaskResponse] = []
-    
+    // MARK: - IBOutlets
+
     @IBOutlet var tableView: UITableView!
     
+    // MARK: - Properties
+
+    private var todoData: [TaskResponse] = []
+    
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -22,6 +28,8 @@ class TodoListViewController: UIViewController {
         self.fetchDataTodoTask()
     }
     
+    // MARK: - UI Setup
+
     private func setupView() {
         self.navigationItem.title = "To Do"
         self.navigationItem.hidesBackButton = true
@@ -30,17 +38,22 @@ class TodoListViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         
         self.tableView.backgroundColor = .white
+        self.tableView.separatorStyle = .none
         
         let rightBtn = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(self.logout))
         rightBtn.tintColor = .white
-        self.navigationItem.rightBarButtonItem = rightBtn
+        let rightBtn2 = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(self.fetchDataTodoTask))
+        rightBtn2.tintColor = .white
+        self.navigationItem.rightBarButtonItems = [rightBtn, rightBtn2]
         
         let leftBtn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(self.addTodoTask))
         leftBtn.tintColor = .white
         self.navigationItem.leftBarButtonItem = leftBtn
     }
     
-    private func fetchDataTodoTask() {
+    // MARK: - Private Methods
+
+    @objc private func fetchDataTodoTask() {
         TodoService.shared.getAllTask { [weak self] fetchResult in
             guard let strongSelf = self else { return }
             switch fetchResult {
@@ -56,7 +69,7 @@ class TodoListViewController: UIViewController {
         }
     }
     
-    @objc func addTodoTask() {
+    @objc private func addTodoTask() {
         let alert = UIAlertController(title: "Alert", message: "Add todo task", preferredStyle: .alert)
         alert.addTextField()
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] _ in
@@ -76,7 +89,7 @@ class TodoListViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    @objc func logout() {
+    @objc private func logout() {
         let alertController = UIAlertController(title: "Alert", message: "Do you want to logout?", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             TodoService.shared.logout { [weak self] fetchResult in
@@ -124,9 +137,7 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let data = self.todoData[indexPath.row]
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "todoCell") as! TodoCell
-        cell.selectionStyle = .none
-        cell.backgroundColor = .white
-        cell.backgroundColor = data.completed ?? false ? .green : .black
+        cell.backgroundColor = data.completed ?? false ? .green : .white
         cell.todoDescriptionLabel.text = data.description
         return cell
     }
