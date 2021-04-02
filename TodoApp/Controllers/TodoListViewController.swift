@@ -97,6 +97,7 @@ class TodoListViewController: UIViewController {
                 switch fetchResult {
                 case .success(let response):
                     if response.value?.status ?? false {
+                        UserProfileManager.removeUserDefault()
                         UserProfileManager.setUserLoginState(isLogin: false)
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         let viewController = storyboard.instantiateViewController(withIdentifier: "LoginViewControllerID") as! LoginViewController
