@@ -10,15 +10,45 @@ import UIKit
 class RegisterViewController: UIViewController {
     // MARK: - IBOutlets
 
-    @IBOutlet var emailTextField: UITextField!
-    @IBOutlet var passwordTextField: UITextField!
+    @IBOutlet var emailTextField: UITextField! {
+        didSet {
+            self.emailTextField.textContentType = .emailAddress
+        }
+    }
+
+    @IBOutlet var passwordTextField: UITextField! {
+        didSet {
+            self.passwordTextField.isSecureTextEntry = true
+        }
+    }
+
     @IBOutlet var nameTextField: UITextField!
-    @IBOutlet var ageTextField: UITextField!
-    @IBOutlet var registerBtn: UIButton!
+    @IBOutlet var ageTextField: UITextField! {
+        didSet {
+            self.ageTextField.keyboardType = .numberPad
+        }
+    }
+
+    @IBOutlet var registerBtn: UIButton! {
+        didSet {
+            self.registerBtn.layer.cornerRadius = 8.0
+            self.registerBtn.addTarget(self, action: #selector(self.register), for: .touchUpInside)
+        }
+    }
+
+    // MARK: - Properties
+
+    private var oUserAction: UserActionViewModel!
 
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
+        self.oUserAction = UserActionViewModel()
+        self.oUserAction.delegate = self
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         self.setupView()
     }
 
@@ -29,12 +59,6 @@ class RegisterViewController: UIViewController {
         self.view.backgroundColor = .orange
         self.navigationController?.navigationBar.barTintColor = .orange
         self.navigationController?.navigationBar.isTranslucent = false
-
-        self.registerBtn.layer.cornerRadius = 8.0
-        self.emailTextField.textContentType = .emailAddress
-        self.ageTextField.keyboardType = .numberPad
-        self.passwordTextField.isSecureTextEntry = true
-        self.registerBtn.addTarget(self, action: #selector(self.register), for: .touchUpInside)
     }
 
     // MARK: - Private Methods
@@ -74,22 +98,24 @@ class RegisterViewController: UIViewController {
             return
         }
 
-        TodoService.shared.register(email: email, password: password, name: name, age: Int(age)!) { [weak self] fetchResult in
-            guard let strongSelf = self else { return }
-            strongSelf.registerBtn.isUserInteractionEnabled = true
-            switch fetchResult {
-            case .success:
-                let alert = UIAlertController(title: "Alert", message: "Register Success", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                    strongSelf.navigationController?.popViewController(animated: true)
-                }))
-                strongSelf.present(alert, animated: true, completion: nil)
+        self.oUserAction.register(email: email, password: password, name: name, age: Int(age) ?? 0)
+    }
+}
 
-            case .failure(let error):
-                let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                strongSelf.present(alert, animated: true, completion: nil)
-            }
-        }
+extension RegisterViewController: UserActionViewModelDelegate {
+    func registerSuccess() {
+        self.registerBtn.isUserInteractionEnabled = true
+        let alert = UIAlertController(title: "Alert", message: "Register Success", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func registerFail(error: Error) {
+        self.registerBtn.isUserInteractionEnabled = true
+        let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 }

@@ -19,15 +19,24 @@ enum UserLoginState {
 
 class UserProfileManager: NSObject {
     static func getUserLoginState() -> UserLoginState {
-        if (Defaults[.loginStatus] ?? false) == true {
+        if Defaults[.loginStatus] ?? false {
             return UserLoginState.login
         } else {
             return UserLoginState.notLogin
         }
     }
 
-    static func setUserLoginState(isLogin: Bool) {
-        Defaults[.loginStatus] = isLogin
+    static func setUserDefault(_ result: LoginResponse) {
+        Defaults[._id] = result.user?._id
+        Defaults[.createdAt] = result.user?.createdAt
+        Defaults[.email] = result.user?.email
+        Defaults[.name] = result.user?.name
+        Defaults[.updatedAt] = result.user?.updatedAt
+        Defaults[.age] = result.user?.age
+        Defaults[.v] = result.user?.__v
+        Defaults[.token] = result.token
+
+        Defaults[.loginStatus] = true
     }
 
     static func removeUserDefault() {
@@ -39,6 +48,8 @@ class UserProfileManager: NSObject {
         Defaults[.updatedAt] = nil
         Defaults[.v] = nil
         Defaults[.token] = nil
+
+        Defaults[.loginStatus] = false
     }
 }
 
