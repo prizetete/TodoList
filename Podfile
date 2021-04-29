@@ -6,6 +6,8 @@ target 'TodoApp' do
   use_frameworks!
   pod 'SwiftyUserDefaults'
   pod 'AlamofireObjectMapper'
+  pod 'RxSwift'
+  pod 'RxCocoa'
   # Pods for TodoApp
   
 end

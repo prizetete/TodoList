@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 class RegisterViewController: UIViewController {
     // MARK: - IBOutlets
@@ -39,7 +41,8 @@ class RegisterViewController: UIViewController {
     // MARK: - Properties
 
     private var oUserAction: UserActionViewModel!
-
+    private var bag = DisposeBag()
+    
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
@@ -59,46 +62,59 @@ class RegisterViewController: UIViewController {
         self.view.backgroundColor = .orange
         self.navigationController?.navigationBar.barTintColor = .orange
         self.navigationController?.navigationBar.isTranslucent = false
+        self.bindRx()
+    }
+    
+    private func bindRx() {
+        let bEmailValidate = self.emailTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                return str.isValidEmail()
+            }
+        
+        let bPwdValidate = self.passwordTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                return str.isValidPassword()
+            }
+        
+        let bNameValidate = self.nameTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                return str.isValidName()
+            }
+        
+        let bAgeValidate = self.ageTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                return str.isValidAge()
+            }
+        
+        Observable
+            .combineLatest(bEmailValidate, bPwdValidate, bNameValidate, bAgeValidate) { (b1,b2,b3,b4) -> Bool in
+                return !(b1 && b2 && b3 && b4)
+            }
+            .bind(to: self.registerBtn.rx.isHidden)
+            .disposed(by: bag)
+            
     }
 
     // MARK: - Private Methods
 
     @objc private func register() {
-        self.registerBtn.isUserInteractionEnabled = false
-        guard let email = self.emailTextField.text, email != "", email.isValidEmail() else {
-            self.emailTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก email ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.registerBtn.isUserInteractionEnabled = true
-            return
-        }
-        guard let password = self.passwordTextField.text, password != "", password.isValidPassword() else {
-            self.passwordTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก password ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.registerBtn.isUserInteractionEnabled = true
-            return
-        }
-        guard let name = self.nameTextField.text, name != "", name.isValidName() else {
-            self.nameTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก name ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.registerBtn.isUserInteractionEnabled = true
-            return
-        }
-        guard let age = self.ageTextField.text, age != "", age.isValidAge() else {
-            self.ageTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก age ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.registerBtn.isUserInteractionEnabled = true
-            return
-        }
-
-        self.oUserAction.register(email: email, password: password, name: name, age: Int(age) ?? 0)
+        self.oUserAction.register(email: self.emailTextField.text!, password: self.passwordTextField.text!, name: self.nameTextField.text!, age: Int(self.ageTextField.text!) ?? 0)
     }
 }
 

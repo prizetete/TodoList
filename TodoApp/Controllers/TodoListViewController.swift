@@ -5,6 +5,8 @@
 //  Created by Komkrit.Sir on 24/3/2564 BE.
 //
 import UIKit
+import RxCocoa
+import RxSwift
 
 class TodoListViewController: UIViewController {
     // MARK: - IBOutlets
@@ -12,7 +14,6 @@ class TodoListViewController: UIViewController {
     @IBOutlet var tableView: UITableView! {
         didSet {
             self.tableView.delegate = self
-            self.tableView.dataSource = self
             self.tableView.backgroundColor = .white
             self.tableView.separatorStyle = .none
         }
@@ -21,8 +22,10 @@ class TodoListViewController: UIViewController {
     // MARK: - Properties
 
     private var todoData: [TaskResponse] = []
+    private var rxTodoData = PublishSubject<[TaskResponse]>()
     private var oUserAction: UserActionViewModel!
     private var oTask: TaskManagementViewModel!
+    private var bag = DisposeBag()
     
     // MARK: - View Life Cycle
 
@@ -32,6 +35,8 @@ class TodoListViewController: UIViewController {
         
         self.oTask = TaskManagementViewModel()
         self.oTask.delegate = self
+        
+        self.bindTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,6 +51,30 @@ class TodoListViewController: UIViewController {
     
     // MARK: - UI Setup
 
+    private func bindTableView() {
+        rxTodoData.bind(to: self.tableView.rx.items(cellIdentifier: "todoCell", cellType: TodoCell.self)) { (row, item, cell) in
+            cell.todoDescriptionLabel.text = item.description
+            cell.backgroundColor = item.completed ?? false ? .green : .white
+        }.disposed(by: bag)
+        
+        self.tableView.rx.modelSelected(TaskResponse.self).subscribe(onNext: { data in
+            if !(data.completed ?? false) {
+                let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoDetailControllerID") as! TodoDetailController
+                destinationVC.id = data._id
+                self.navigationController?.pushViewController(destinationVC, animated: true)
+            }
+        }).disposed(by: bag)
+        
+        self.tableView.rx.itemDeleted.subscribe(onNext: {
+            print("idx: \($0)")
+        }).disposed(by: bag)
+    }
+    
+    private func removeItem() {
+        
+        
+    }
+    
     private func setupView() {
         self.navigationItem.title = "To Do"
         self.navigationItem.hidesBackButton = true
@@ -92,47 +121,13 @@ class TodoListViewController: UIViewController {
     }
 }
 
-extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.todoData.count > 0 {
-            let data = self.todoData[indexPath.row]
-            if !(data.completed ?? false) {
-                let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoDetailControllerID") as! TodoDetailController
-                destinationVC.id = data._id
-                self.navigationController?.pushViewController(destinationVC, animated: true)
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.todoData.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let data = self.todoData[indexPath.row]
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: "todoCell") as! TodoCell
-        cell.backgroundColor = data.completed ?? false ? .green : .white
-        cell.todoDescriptionLabel.text = data.description
-        return cell
-    }
-    
+extension TodoListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70.0
     }
-    
+
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70.0
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return self.todoData.count > 0 ? .delete : .none
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete, self.todoData.count > 0 {
-            let data = self.todoData[indexPath.row]
-            self.oTask.removeTask(id: data._id ?? "", idxPath: indexPath)
-        }
     }
 }
 
@@ -157,8 +152,7 @@ extension TodoListViewController: UserActionViewModelDelegate {
 
 extension TodoListViewController: TaskManagementViewModelDelegate {
     func getAllTask(data: [TaskResponse]) {
-        self.todoData = data
-        self.tableView.reloadData()
+        rxTodoData.onNext(data)
     }
     
     func getAllTaskFail(error: Error) {

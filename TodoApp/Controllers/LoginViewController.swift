@@ -5,6 +5,8 @@
 //  Created by Komkrit.Sir on 24/3/2564 BE.
 //
 
+import RxCocoa
+import RxSwift
 import SwiftyUserDefaults
 import UIKit
 
@@ -27,6 +29,7 @@ class LoginViewController: UIViewController {
     
     // MARK: - Properties
 
+    private var bag = DisposeBag()
     private var oUserAction: UserActionViewModel!
     
     // MARK: - View Life Cycle
@@ -53,48 +56,76 @@ class LoginViewController: UIViewController {
         let rightBtn = UIBarButtonItem(title: "Register", style: .plain, target: self, action: #selector(self.register))
         rightBtn.tintColor = .white
         self.navigationItem.rightBarButtonItem = rightBtn
+        
+        self.bindTextField()
     }
     
     // MARK: - Private Methods
 
+    private func bindTextField() {
+        let countTap = loginBtn
+                    .rx
+                    .tap
+                    .scan(0) { (count, _) -> Int in
+                        count + 1
+                }
+                
+                countTap.map { (count) -> String in
+                    "Count : \(count)"
+                    }
+                    .bind(to: loginBtn.rx.title())
+                    .disposed(by: bag)
+                
+//                countTap.map { (count) -> Bool in
+//                    count > 5
+//                    }
+//                    .bind(to: loginBtn.rx.isEnabled)
+//                    .disposed(by: bag)
+        
+//        let usr = self.userNameTextField
+//            .rx
+//            .text
+//            .orEmpty
+//            .asObservable()
+//            .map { (str) -> Bool in
+//                str.isValidEmail()
+//            }
+//
+//        let pwd = self.passwordTextField
+//            .rx
+//            .text
+//            .orEmpty
+//            .asObservable()
+//            .map { (str) -> Bool in
+//                str.isValidPassword()
+//            }
+//
+//        Observable
+//            .combineLatest(usr, pwd) { isValidUsr, isValidPwd in
+//                isValidUsr && isValidPwd
+//            }
+//            .bind(to: self.loginBtn.rx.isEnabled)
+//            .disposed(by: bag)
+    }
+    
     @objc private func register() {
         let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "RegisterViewControllerID") as! RegisterViewController
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     @objc private func login() {
-        self.loginBtn.isUserInteractionEnabled = false
-        
-        guard let email = self.userNameTextField.text, email != "", email.isValidEmail() else {
-            self.userNameTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก email ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.loginBtn.isUserInteractionEnabled = true
-            return
-        }
-        guard let password = self.passwordTextField.text, password != "", password.isValidPassword() else {
-            self.passwordTextField.becomeFirstResponder()
-            let alert = UIAlertController(title: "Alert", message: "กรอก password ใหม่", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            self.loginBtn.isUserInteractionEnabled = true
-            return
-        }
-        self.oUserAction.login(email: email, password: password)
+//        self.oUserAction.login(email: self.userNameTextField.text!, password: self.passwordTextField.text!)
     }
 }
 
 extension LoginViewController: UserActionViewModelDelegate {
     func loginSuccess(data: LoginResponse) {
-        self.loginBtn.isUserInteractionEnabled = true
         UserProfileManager.setUserDefault(data)
         let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TodoListViewControllerID") as! TodoListViewController
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     func loginFail(error: Error) {
-        self.loginBtn.isUserInteractionEnabled = true
         let alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
