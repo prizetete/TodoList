@@ -63,18 +63,18 @@ class LoginViewController: UIViewController {
     // MARK: - Private Methods
 
     private func bindTextField() {
-        let countTap = loginBtn
-                    .rx
-                    .tap
-                    .scan(0) { (count, _) -> Int in
-                        count + 1
-                }
-                
-                countTap.map { (count) -> String in
-                    "Count : \(count)"
-                    }
-                    .bind(to: loginBtn.rx.title())
-                    .disposed(by: bag)
+//        let countTap = loginBtn
+//                    .rx
+//                    .tap
+//                    .scan(0) { (count, _) -> Int in
+//                        count + 1
+//                }
+//
+//                countTap.map { (count) -> String in
+//                    "Count : \(count)"
+//                    }
+//                    .bind(to: loginBtn.rx.title())
+//                    .disposed(by: bag)
                 
 //                countTap.map { (count) -> Bool in
 //                    count > 5
@@ -82,30 +82,30 @@ class LoginViewController: UIViewController {
 //                    .bind(to: loginBtn.rx.isEnabled)
 //                    .disposed(by: bag)
         
-//        let usr = self.userNameTextField
-//            .rx
-//            .text
-//            .orEmpty
-//            .asObservable()
-//            .map { (str) -> Bool in
-//                str.isValidEmail()
-//            }
-//
-//        let pwd = self.passwordTextField
-//            .rx
-//            .text
-//            .orEmpty
-//            .asObservable()
-//            .map { (str) -> Bool in
-//                str.isValidPassword()
-//            }
-//
-//        Observable
-//            .combineLatest(usr, pwd) { isValidUsr, isValidPwd in
-//                isValidUsr && isValidPwd
-//            }
-//            .bind(to: self.loginBtn.rx.isEnabled)
-//            .disposed(by: bag)
+        let usr = self.userNameTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                str.isValidEmail()
+            }
+
+        let pwd = self.passwordTextField
+            .rx
+            .text
+            .orEmpty
+            .asObservable()
+            .map { (str) -> Bool in
+                str.isValidPassword()
+            }
+
+        Observable
+            .combineLatest(usr, pwd) { isValidUsr, isValidPwd in
+                isValidUsr && isValidPwd
+            }
+            .bind(to: self.loginBtn.rx.isEnabled)
+            .disposed(by: bag)
     }
     
     @objc private func register() {
@@ -114,7 +114,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func login() {
-//        self.oUserAction.login(email: self.userNameTextField.text!, password: self.passwordTextField.text!)
+        self.oUserAction.login(email: self.userNameTextField.text!, password: self.passwordTextField.text!)
     }
 }
 
